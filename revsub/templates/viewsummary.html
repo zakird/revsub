@@ -1,0 +1,32 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html"/>
+
+	<head>
+	  <title>View Summary</title>
+	</head>
+
+	<body>
+		<div class="row">
+			<div class="span1"/>
+			<div class="span10">
+				<h3>View Summary</h3>
+				<h5>Paper Title</h5><p><a href="${paper.download_url}">${paper.name}</a></p>
+				<h5>Paper Abstract</h5><p><small>${paper.abstract}</small></p>
+				<h5>Submission Details</h5><p>${summary.submitted_at} by ${summary.student.display_name}</p>
+				<h5>Paper Summary</h5><p>${summary.summary}</p>
+				<h5>Summary Comments</h5>
+				<div py:for="review in summary.reviews">
+					<blockquote>
+						<p><span class="label label-info" py:if="review.rating">${review.rating}</span> ${review.comments if review.comments else "no comments"}</p>
+						<small py:if="review.type=='student_review'">Anonymous Student</small>
+						<small py:if="review.type=='instructor_review'">${review.creator.display_name}</small>
+					</blockquote>
+				</div>
+				<p><button class="btn btn-small btn-inverse" type="button">add review</button></p>
+			</div>	
+		</div>
+	</body>
+</html>

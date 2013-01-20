@@ -1,0 +1,54 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      py:strip="">
+<head py:match="head" py:attrs="select('@*')">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="${response.charset}" />
+  <title py:if="False">Review Submission Framework</title>
+  <meta py:replace="select('*')"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/bootstrap.min.css')}" />
+  <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/bootstrap-responsive.min.css')}" />
+  <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/style.css')}" />
+</head>
+
+<body py:match="body" py:attrs="select('@*')">
+  <div class="container">
+    <!-- Navbar -->
+    <div class="navbar navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Paper Review System</a>
+          <ul class="nav nav-pills">
+            <li class="${('', 'active')[defined('page') and page=='course']}"><a href="${tg.url('/course')}">My Courses</a></li>
+						<li class="${('', 'active')[defined('page') and page=='summaries']}"><a href="${tg.url('/summary')}">My Summaries</a></li>
+						<li class="${('', 'active')[defined('page') and page=='instructor']}"><a href="${tg.url('/instructor')}">Instructor Tools</a></li>
+          </ul>
+          <ul class="nav pull-right" py:if="tg.auth_stack_enabled">
+	           <li py:if="request.identity"><a href="${tg.url('/admin')}">Administration</a></li>
+            <li py:if="not request.identity"><a href="${tg.url('/index')}">Login</a></li>
+            <li py:if="request.identity"><a href="${tg.url('/logout_handler')}">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Flash messages -->
+    <py:with vars="flash=tg.flash_obj.render('flash', use_js=False)">
+      <div class="row"><div class="span8 offset2">
+        <div py:if="flash" py:replace="Markup(flash)" />
+      </div></div>
+    </py:with>
+
+    <!-- Main included content -->
+    <div py:replace="select('*|text()')"/>
+
+    <!-- Footer included from an external template -->
+    <footer class="footer hidden-tablet hidden-phone">
+      <p>Copyright &copy; revsub ${h.current_year()}</p>
+    </footer>
+
+		<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+		<script src="${tg.url('/javascript/bootstrap.js')}"></script>
+  </div>
+</body>
+</html>

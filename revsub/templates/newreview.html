@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+	<head>
+	  <title>New Summary and Peer Review</title>
+	</head>
+
+	<body>
+		<div class="row">
+			<form class="form-horizontal">
+			<div class="span1"/>
+			<div class="span10">
+				<div py:for="peer in peer_review">
+					<h4>Summary Peer Review (1)</h4>
+					<div class="control-group">
+				    <label class="control-label" for="Title"><b>Paper</b></label>
+				    <div class="controls">
+				      <p><a href="${paper.download_url}">${paper.name}</a></p>
+				    </div>
+				  </div>
+			
+					<div class="control-group">
+				    <label class="control-label" for="abstract"><b>Summary</b></label>
+				    <div class="controls">
+				      <p><small>${paper.abstract}</small></p>
+				    </div>
+				  </div>
+			
+					<div class="control-group">
+				    <label class="control-label" for="summary"><b>Grade</b></label>
+				<div class="controls">
+				    <select>
+						  <option>1 (poor)</option>
+						  <option>2</option>
+						  <option>3 (average)</option>
+						  <option>4</option>
+						  <option>5 (excellent)</option>
+						</select>
+				    </div>
+				  </div>
+					<br/>
+			
+				  <div class="control-group">
+				    <label class="control-label" for="summary"><b>Comments</b></label>
+				    <div class="controls"><textarea rows="3" class="span8"></textarea>
+				    </div>
+				  </div>
+					<br/>
+				</div>
+				
+				<h4>Create New Summary</h4>
+				
+				  <div class="control-group">
+				    <label class="control-label" for="Title"><b>Title</b></label>
+				    <div class="controls">
+				      <p><a href="${paper.download_url}">${paper.name}</a></p>
+				    </div>
+				  </div>
+				
+					<div class="control-group">
+				    <label class="control-label" for="abstract"><b>Abstract</b></label>
+				    <div class="controls">
+				      <p><small>${paper.abstract}</small></p>
+				    </div>
+				  </div>
+				
+				  <div class="control-group">
+				    <label class="control-label" for="summary"><b>Summary</b></label>
+				    <div class="controls"><textarea rows="15" class="span8"></textarea>
+				    </div>
+				  </div>
+				
+				  <div class="control-group">
+				    <div class="controls">
+				      <button type="submit" class="btn btn-primary">Submit</button>
+				    </div>
+				  </div>
+				
+			</div>
+			</form>
+			</div>
+			
+	</body>
+</html>
