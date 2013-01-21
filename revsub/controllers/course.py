@@ -21,12 +21,11 @@ class CourseController(BaseController):
         user = DBSession.query(User).filter(User.user_name == login).one()
         courses_e = {}
         for course in user.courses_enrolled_in:
-            courses_e[course] = []
-            for paper, summary in DBSession.query(Paper, PaperSummary)\
-                            .outerjoin(PaperSummary)\
-                            .filter(or_(PaperSummary.student_id == user.id,PaperSummary.student_id == None))\
-                            .filter(Paper.course_id == course.id).all():
-                courses_e[course].append((paper, summary))
+            r = DBSession.execute("""select p.id as paper_id, z.id as summary_id, p.download_url, p.name, p.due_date FROM papers p LEFT JOIN (
+                SELECT s.id, s.paper_id from paper_summaries s WHERE s.student_id = :user_id) z
+                ON p.id = z.paper_id where p.course_id = :course_id""",
+                            dict(user_id=user.id, course_id = course.id)).fetchall()
+            courses_e[course] = r
         return dict(page="course", courses_enrolled=courses_e,
                         courses_taught=user.courses_taught)
         

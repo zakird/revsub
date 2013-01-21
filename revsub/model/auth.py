@@ -1,17 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Auth* related model.
-
-This is where the models used by the authentication stack are defined.
-
-It's perfectly fine to re-use this definition in the revsub application,
-though.
-
-"""
-import os, sys
+import os
+import sys
 from datetime import datetime
 from hashlib import sha256
-__all__ = ['User', 'Group', 'Permission']
 
 from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Unicode, Integer, DateTime
@@ -19,8 +10,8 @@ from sqlalchemy.orm import relation, synonym
 
 from revsub.model import DeclarativeBase, metadata, DBSession
 
-# This is the association table for the many-to-many relationship between
-# groups and permissions.
+__all__ = ['User', 'Group', 'Permission']
+
 group_permission_table = Table('group_permission', metadata,
     Column('group_id', Integer, ForeignKey('groups.id',
         onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
@@ -28,8 +19,6 @@ group_permission_table = Table('group_permission', metadata,
         onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 )
 
-# This is the association table for the many-to-many relationship between
-# groups and members - this is, the memberships.
 user_group_table = Table('user_group', metadata,
     Column('user_id', Integer, ForeignKey('users.id',
         onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
@@ -39,13 +28,6 @@ user_group_table = Table('user_group', metadata,
 
 
 class Group(DeclarativeBase):
-    """
-    Group definition
-
-    Only the ``group_name`` column is required.
-
-    """
-
     __tablename__ = 'groups'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
@@ -60,14 +42,8 @@ class Group(DeclarativeBase):
     def __unicode__(self):
         return self.group_name
 
+
 class User(DeclarativeBase):
-    """
-    User definition.
-
-    This is the user definition used by :mod:`repoze.who`, which requires at
-    least the ``user_name`` column.
-
-    """
     __tablename__ = 'users'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
@@ -130,17 +106,6 @@ class User(DeclarativeBase):
                                                         _set_password))
 
     def validate_password(self, password):
-        """
-        Check the password against existing credentials.
-
-        :param password: the password that was provided by the user to
-            try and authenticate. This is the clear text version that we will
-            need to match against the hashed one in the database.
-        :type password: unicode object.
-        :return: Whether the password is valid.
-        :rtype: bool
-
-        """
         hash = sha256()
         if isinstance(password, unicode):
             password = password.encode('utf-8')
@@ -149,15 +114,7 @@ class User(DeclarativeBase):
 
 
 class Permission(DeclarativeBase):
-    """
-    Permission definition.
-
-    Only the ``permission_name`` column is required.
-
-    """
-
     __tablename__ = 'permissions'
-
 
     id = Column(Integer, autoincrement=True, primary_key=True)
     permission_name = Column(Unicode(63), unique=True, nullable=False)

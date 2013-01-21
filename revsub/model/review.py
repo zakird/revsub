@@ -35,7 +35,6 @@ questions for peer review
 class SummaryReview(DeclarativeBase):
     __tablename__ = 'summary_reviews'
     
-    
     id = Column(Integer, primary_key=True)
     type = Column(Unicode(255), nullable=False)
     __mapper_args__ = {'polymorphic_on': type, 'polymorphic_identity': 'review'}
@@ -47,7 +46,17 @@ class SummaryReview(DeclarativeBase):
     creator = relation(User)
     
     rating = Column(Integer)
+    insight_rating = Column(Integer)
     comments = Column(UnicodeText)
+    
+    def __init__(self, summary, reading_rating,
+                    insight_rating, comments, creator):
+        self.summary_id = summary.id
+        self.rating = reading_rating
+        self.insight_rating = insight_rating
+        self.comments = comments
+        self.creator_id = creator.id
+    
     
 class InstructorSummaryReview(SummaryReview):
     __mapper_args__ = {'polymorphic_identity': 'instructor_review'}

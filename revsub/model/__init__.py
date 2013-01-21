@@ -23,5 +23,6 @@ def init_model(engine):
 from revsub.model.auth import User, Group, Permission
 from revsub.model.course import Course
 from revsub.model.summary import PaperSummary
-from revsub.model.review import SummaryReview, InstructorSummaryReview, StudentSummaryReview
+from revsub.model.review import SummaryReview, \
+                InstructorSummaryReview, StudentSummaryReview
 from revsub.model.paper import Paper

@@ -18,9 +18,10 @@
 				<h5>Submission Details</h5><p>${summary.submitted_at} by ${summary.student.display_name}</p>
 				<h5>Paper Summary</h5><p>${summary.summary}</p>
 				<h5>Comments and Ratings</h5>
+				<div py:if="not summary.reviews"><p>no comments currently available</p></div>
 				<div py:for="review in summary.reviews">
 					<blockquote>
-						<p><span class="label label-info" py:if="review.rating">${review.rating}</span> ${review.comments if review.comments else "no comments"}</p>
+						<p><span class="label label-info" py:if="str(review.rating)">${str(review.rating)}</span> ${review.comments if review.comments else "no comment"}</p>
 						<small py:if="review.type=='student_review'">Anonymous Student</small>
 						<small py:if="review.type=='instructor_review'">${review.creator.display_name}</small>
 					</blockquote>

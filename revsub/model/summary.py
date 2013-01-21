@@ -22,3 +22,7 @@ class PaperSummary(DeclarativeBase):
     student = relation(User, backref='submitted_summaries')
     paper = relation(Paper, backref = 'submitted_summaries')
     
+    def __init__(self, paper, student, summary):
+        self.paper_id = paper.id
+        self.student_id = student.id
+        self.summary = summary
