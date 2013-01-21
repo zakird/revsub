@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from tg import expose, flash, redirect, require, request
 from tg.i18n import ugettext as _, lazy_ugettext as l_
-from tg.predicates import has_permission
+from tg.predicates import has_permission, Any, is_user 
 
 from revsub.lib.base import BaseController
 from revsub.model import DeclarativeBase, metadata, DBSession, Group, User, Course, Paper, PaperSummary
@@ -10,9 +10,8 @@ from revsub.model import DeclarativeBase, metadata, DBSession, Group, User, Cour
 __all__ = ['SummaryController']
 
 class SummaryController(BaseController):
-    
-    # The predicate that must be met for all the actions in this controller:
-    #allow_only = has_permission('student')
+
+    allow_only = Any(has_permission('student'), has_permission('instructor'))
     
     def _generate_peer_review_hmac(self, user, paper):
         return None
@@ -52,7 +51,8 @@ class SummaryController(BaseController):
         AND s.student_id <> :user_id
         GROUP BY s.id ORDER BY count(r.id) DESC LIMIT %i) z ON
         s.id = z.id""" % num_summaries
-        return DBSession.query(PaperSummary).from_statement(sql_s).params(user_id=user.id).all()
+        return DBSession.query(PaperSummary)\
+                        .from_statement(sql_s).params(user_id=user.id).all()
     
     @expose('revsub.templates.newreview')
     def create(self, paper_id):
@@ -65,21 +65,41 @@ class SummaryController(BaseController):
             redirect('/error', params=dict(msg="invalid paper supplied"))
          # does this user have access to this paper?
         if not self._check_eligible_submit(user, paper):
-            redirect('/error', params=dict(msg="user does not have access to paper"))
+            redirect('/error', params=dict(
+                            msg="user does not have access to paper"))
         # has this user already submitted this paper?
         if self._check_user_submitted_paper(user, paper):
-            redirect('/error', params=dict(msg="user already submitted summary for this paper"))
+            redirect('/error', params=dict(
+                            msg="user already submitted summary for this paper"))
         summaries_to_review = self._get_summaries_to_peer_review(user)
         return dict(page="newreview", paper=paper, peer_review=summaries_to_review)
+        
+    @expose()
+        
        
     @expose('revsub.templates.mysummaries') 
     def index(self):
         login = request.environ.get('repoze.who.identity').get('repoze.who.userid')
         user = DBSession.query(User).filter(User.user_name == login).one()
-        summaries = DBSession.query(PaperSummary, Paper)\
-                        .join(PaperSummary.paper)\
-                        .filter(PaperSummary.student_id == user.id).all()
+        summaries = DBSession.execute("""
+            SELECT s.id as summary_id, s.*, p.*, z.avg_rating,
+                z.num_reviews as num_reviews
+            FROM papers p join paper_summaries s on p.id = s.paper_id
+            LEFT JOIN (
+                SELECT s.id as id, avg(r.rating) as avg_rating,
+                    count(r.id) as num_reviews
+                FROM paper_summaries s JOIN summary_reviews r
+                ON s.id = r.summary_id
+                GROUP BY s.id
+            ) z on s.id = z.id""")
         return dict(page="summaries", summaries=summaries)
+        
+    def _can_view_summary(self, summary, user):
+        if summary.student == user:
+            return True
+        elif user in summary.paper.course.instructors.users:
+            return True
+        return False
         
     @expose('revsub.templates.viewsummary') 
     def view(self, summary_id):
@@ -88,10 +108,9 @@ class SummaryController(BaseController):
         summary = DBSession.query(PaperSummary).filter(PaperSummary.id == int(summary_id)).first()
         if not summary:
             redirect('/error', params=dict(msg="invalid paper summary"))
-        if not summary.student == user:
+        if not self._can_view_summary(summary, user):
             redirect('/error', params=dict(msg="invalid permissions to view summary"))
         paper = summary.paper
         return dict(page="viewreview", paper=paper, summary=summary)
                
-        
         

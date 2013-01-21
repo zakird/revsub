@@ -8,6 +8,30 @@ from sqlalchemy.orm import relation, backref
 
 from revsub.model import DeclarativeBase, metadata, DBSession, PaperSummary, User
 
+"""
+questions for peer review
+
+    1. Did this person read the paper?
+    
+        0. No/ only hte title
+        1. Somewhat/ probably skimmed it
+        2. Yes/read it pretty carefully
+        3. Wow!/Must be one of the authors
+        
+    2. Did this person think carefully about the paper?
+        0. No/Just spit back the contents
+        1. Somewhat/this seems like shallow verbiage
+        2. Yes/made some good points
+        3. Wow!/this is really inciteful 
+        
+    3. Comments
+    
+    show them --
+        your average score
+        overall average score for course
+
+"""
+
 class SummaryReview(DeclarativeBase):
     __tablename__ = 'summary_reviews'
     

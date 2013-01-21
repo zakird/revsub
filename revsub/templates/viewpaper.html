@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html"/>
+
+	<head>
+	  <title>View Assigned Paper</title>
+	</head>
+	<body>
+		<div class="row">
+			<div class="span1"/>
+			<div class="span10">
+				<h3>View Assigned Paper</h3>
+				<h5>Paper Title</h5>
+				<p><a href="${paper.download_url}">${paper.name}</a></p>
+				<h5>Abstract</h5>
+				<p><small>${paper.abstract}</small></p>
+				<h5>Student Submissions</h5>
+				<table class="table table-striped">
+				  <thead>
+				    <tr>
+							<th></th>
+				      <th>Name</th>
+				      <th>Login</th>
+							<th>Submitted At</th>
+							<th>Avg Score</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr py:for="r in summaries">
+							<td>
+								<a href="/summary/view?summary_id=${r.summary_id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
+							</td>
+				      <td><a href="/student/view?student_id=${r.user_id}">${r.display_name}</a></td>
+				      <td>${r.user_name}</td>
+							<td>${r.submitted_at if r.submitted_at else 'no submission'}</td>
+							<td>${r.avg_rating if r.avg_rating else '0.0'}</td>
+				    </tr>
+				  </tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>

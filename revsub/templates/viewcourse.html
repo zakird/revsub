@@ -1,0 +1,111 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html"/>
+
+	<head>
+	  <title>View Course</title>
+	</head>
+	<body>
+		<div class="row">
+			<div class="span1"/>
+			<div class="span10">
+				<h3>${course.name}</h3>
+				<div class="accordion" id="accordion2">
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+				        <b>Course Instructors</b>
+				      </a>
+				    </div>
+				    <div id="collapseOne" class="accordion-body collapse">
+				      <div class="accordion-inner">
+				        <table class="table table-striped">
+								  <thead>
+								    <tr>
+											<th></th>
+								      <th>Name</th>
+								      <th>Login</th>
+											<th>Email</th>
+								    </tr>
+								  </thead>
+								  <tbody>
+								    <tr py:for="instructor in instructors">
+											<td>
+												<a href="#}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
+											</td>
+								      <td>${instructor.display_name}</td>
+								      <td>${instructor.user_name}</td>
+											<td>${instructor.user_name}</td>
+								    </tr>
+								  </tbody>
+								</table>
+				      </div>
+				    </div>
+				  </div>
+				  <div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+				        <b>Enrolled Students</b>
+				      </a>
+				    </div>
+				    <div id="collapseTwo" class="accordion-body collapse">
+				      <div class="accordion-inner">
+				        <table class="table table-striped">
+								  <thead>
+								    <tr>
+											<th></th>
+								      <th>Name</th>
+								      <th>Login</th>
+											<th>Email</th>
+								    </tr>
+								  </thead>
+								  <tbody>
+								    <tr py:for="student in students">
+											<td>
+												<a href="/student/view?student_id=${student.id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
+											</td>
+								      <td>${student.display_name}</td>
+								      <td>${student.user_name}</td>
+											<td>${student.user_name}</td>
+								    </tr>
+								  </tbody>
+								</table>
+				      </div>
+				    </div>
+				  </div>
+					<div class="accordion-group">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+				        <b>Assigned Papers</b>
+				      </a>
+				    </div>
+				    <div id="collapseThree" class="accordion-body collapse">
+				      <div class="accordion-inner">
+				        <table class="table table-striped">
+								  <thead>
+								    <tr>
+											<th></th>
+								      <th>Paper</th>
+								      <th>Submissions</th>
+								    </tr>
+								  </thead>
+								  <tbody>
+								    <tr py:for="paper in papers	">
+											<td>
+												<a href="/paper/view?paper_id=${paper.id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
+											</td>
+								      <td><a href="${paper.download_url}">${paper.name}</a></td>
+								      <td>${paper.due_date.strftime("%m/%d/%Y")}</td>
+								    </tr>
+								  </tbody>
+								</table>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

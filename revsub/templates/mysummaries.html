@@ -19,17 +19,17 @@
 								<th></th>
 					      <th>Paper</th>
 					      <th>Submitted</th>
-								<th>Due Date</th>
+								<th>Rating</th>
 					    </tr>
 					  </thead>
 					  <tbody>
-					    <tr py:for="summary, paper in summaries">
+					    <tr py:for="r in summaries">
 								<td>
-									<a href="/summary/view?summary_id=${summary.id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
+									<a href="/summary/view?summary_id=${r.summary_id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
 								</td>
-					      <td><a href="${paper.download_url}">${paper.name}</a></td>
-					      <td>${summary.submitted_at.strftime("%m/%d/%Y")}</td>
-								<td>${paper.due_date.strftime("%m/%d/%Y")}</td>
+					      <td><a href="${r.download_url}">${r.name}</a></td>
+					      <td>${r.submitted_at}</td>
+								<td>${r.avg_rating}</td>
 					    </tr>
 					  </tbody>
 					</table>

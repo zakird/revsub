@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html"/>
+
+	<head>
+	  <title>View Student</title>
+	</head>
+
+	<body>
+		<div class="row">
+			<div class="span12">
+				<h3>${student.display_name} (${student.user_name})</h3>
+				<h5>Enrolled Courses</h5>
+				<div class="accordion" id="accordion2">
+				  <div class="accordion-group" py:for="course in courses">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse${course.id}">
+				        <b>${course.name}</b>
+				      </a>
+				    </div>
+				    <div id="collapse${course.id}" class="accordion-body collapse in">
+				      <div class="accordion-inner">
+				        <table class="table table-striped">
+								  <thead>
+								    <tr>
+											<th></th>
+								      <th>Paper</th>
+											<th>Submitted At</th>
+								      <th>Score</th>
+								    </tr>
+								  </thead>
+								  <tbody>
+								    <tr py:for="r in courses[course]">
+											<td><span py:if="r.summary_id"><a href="/summary/view?summary_id=${r.summary_id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a></span></td>
+								      <td><a href="/paper/view?paper_id=${r.paper_id_p}">${r.name}</a></td>
+								      <td>${r.submitted_at if r.submitted_at else 'no submission'}</td>
+											<td>${r.avg_rating if r.avg_rating else '0.0'}</td>
+								    </tr>
+								  </tbody>
+								</table>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

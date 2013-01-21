@@ -12,15 +12,15 @@
 		<div class="row">
 			<div class="span1"/>
 			<div class="span10">
-				<h3>My Courses</h3>
+				<h3 py:if="courses_enrolled">My Enrolled Courses</h3>
 				<div class="accordion" id="accordion2">
-				  <div class="accordion-group" py:for="course in courses">
+				  <div class="accordion-group" py:for="course in courses_enrolled">
 				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-				        <b>${course}</b>
+				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse${course.id}">
+				        <b>${course.name}</b>
 				      </a>
 				    </div>
-				    <div id="collapseOne" class="accordion-body collapse in">
+				    <div id="collapse${course.id}" class="accordion-body collapse in">
 				      <div class="accordion-inner">
 				        <table class="table table-striped">
 								  <thead>
@@ -31,7 +31,7 @@
 								    </tr>
 								  </thead>
 								  <tbody>
-								    <tr py:for="paper, summary in courses[course]">
+								    <tr py:for="paper, summary in courses_enrolled[course]">
 											<td>
 												<a href="/summary/create?paper_id=${paper.id}"><button class="btn btn-mini btn-inverse" type="button" py:if="not summary">submit</button></a>
 												<span py:if="summary is not None"><a href="/summary/view?summary_id=${summary.id}"><button class="btn btn-mini btn-success" type="button">review</button></a></span>
@@ -44,7 +44,14 @@
 				      </div>
 				    </div>
 				  </div>
-				
+					<h3 py:if="courses_taught">My Administered Courses</h3>
+					<div class="accordion-group" py:for="course in courses_taught">
+				    <div class="accordion-heading">
+				      <a class="accordion-toggle" href="/course/view?course_id=${course.id}">
+				        <b>${course.name}</b>
+				      </a>
+				    </div>
+				  </div>
 				</div>
 			</div>
 			</div>

@@ -14,10 +14,10 @@
 			<div class="span10">
 				<h3>View Summary</h3>
 				<h5>Paper Title</h5><p><a href="${paper.download_url}">${paper.name}</a></p>
-				<h5>Paper Abstract</h5><p><small>${paper.abstract}</small></p>
+				<h5>Abstract</h5><p><small>${paper.abstract}</small></p>
 				<h5>Submission Details</h5><p>${summary.submitted_at} by ${summary.student.display_name}</p>
 				<h5>Paper Summary</h5><p>${summary.summary}</p>
-				<h5>Summary Comments</h5>
+				<h5>Comments and Ratings</h5>
 				<div py:for="review in summary.reviews">
 					<blockquote>
 						<p><span class="label label-info" py:if="review.rating">${review.rating}</span> ${review.comments if review.comments else "no comments"}</p>

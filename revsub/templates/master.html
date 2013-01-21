@@ -22,7 +22,6 @@
           <ul class="nav nav-pills">
             <li class="${('', 'active')[defined('page') and page=='course']}"><a href="${tg.url('/course')}">My Courses</a></li>
 						<li class="${('', 'active')[defined('page') and page=='summaries']}"><a href="${tg.url('/summary')}">My Summaries</a></li>
-						<li class="${('', 'active')[defined('page') and page=='instructor']}"><a href="${tg.url('/instructor')}">Instructor Tools</a></li>
           </ul>
           <ul class="nav pull-right" py:if="tg.auth_stack_enabled">
 	           <li py:if="request.identity"><a href="${tg.url('/admin')}">Administration</a></li>
@@ -34,9 +33,10 @@
     </div>
     <!-- Flash messages -->
     <py:with vars="flash=tg.flash_obj.render('flash', use_js=False)">
-      <div class="row"><div class="span8 offset2">
-        <div py:if="flash" py:replace="Markup(flash)" />
-      </div></div>
+				<div class="alert alert-error" py:if="flash">
+				  <button type="button" class="close" data-dismiss="alert">&times;</button>
+				  <span py:if="flash" py:replace="Markup(flash)"/>
+				</div>
     </py:with>
 
     <!-- Main included content -->

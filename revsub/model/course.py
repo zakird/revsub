@@ -22,6 +22,13 @@ class Course(DeclarativeBase):
 
 @property
 def get_courses_enrolled_in(self):
-    return DBSession.query(Course).join(Course.students).filter(User.id == self.id)
-    
+    return DBSession.query(Course)\
+                    .join(Course.students).join(Group.users)\
+                    .filter(User.id == self.id).all()
 User.courses_enrolled_in = get_courses_enrolled_in
+
+@property
+def get_courses_taught(self):
+    return DBSession.query(Course).join(Course.instructors)\
+                    .join(Group.users).filter(User.id == self.id).all()
+User.courses_taught = get_courses_taught
