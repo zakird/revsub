@@ -38,6 +38,8 @@ class RootController(BaseController):
         return dict(page='index', login_counter=str(login_counter),
                     came_from=came_from)
 
+    login = index
+
     @expose()
     def post_login(self, came_from=lurl('/')):
         """
