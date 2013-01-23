@@ -12,16 +12,26 @@
 		<div class="row">
 			<div class="span1"/>
 			<div class="span10">
-				<h3>View Summary</h3>
+				<h3>View Paper Response</h3>
 				<h5>Paper Title</h5><p><a href="${paper.download_url}">${paper.name}</a></p>
 				<h5>Abstract</h5><p><small>${paper.abstract}</small></p>
 				<h5>Submission Details</h5><p>${summary.submitted_at} by ${summary.student.display_name}</p>
-				<h5>Paper Summary</h5><p>${summary.summary}</p>
+				<h5>Paper Response</h5><p>${summary.summary}</p>
 				<h5>Comments and Ratings</h5>
 				<div py:if="not summary.reviews"><p>no comments currently available</p></div>
 				<div py:for="review in summary.reviews">
 					<blockquote>
-						<p><span class="label label-info" py:if="str(review.rating)">${str(review.rating)}/3 reading</span> <span class="label label-info" py:if="str(review.insight_rating)">${str(review.insight_rating)}/3 insight</span> ${review.comments if review.comments else "no comments."}</p>
+						<p>
+							<span class="label label-important" py:if="review.rating == 0">${str(review.rating)} - reading</span>
+							<span class="label label-warning" py:if="review.rating == 1">${str(review.rating)} - reading</span>
+							<span class="label label-info" py:if="review.rating == 2">${str(review.rating)} - reading</span>
+							<span class="label label-success" py:if="review.rating == 3">${str(review.rating)} - reading</span>
+							
+							<span class="label label-important" py:if="review.insight_rating == 0">${str(review.insight_rating)} - insight</span>
+							<span class="label label-warning" py:if="review.insight_rating == 1">${str(review.insight_rating)} - insight</span>
+							<span class="label label-info" py:if="review.insight_rating == 2">${str(review.insight_rating)} - insight</span>
+							<span class="label label-success" py:if="review.insight_rating == 3">${str(review.insight_rating)} - insight</span>
+							${review.comments if review.comments else "no comments."}</p>
 						<small py:if="review.type=='student_review'">Anonymous Student</small>
 						<small py:if="review.type=='instructor_review'">${review.creator.display_name}</small>
 					</blockquote>

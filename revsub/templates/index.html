@@ -5,22 +5,28 @@
   <xi:include href="master.html" />
 
 <head>
-  <title>Welcome to TurboGears 2.2, standing on the shoulders of giants, since 2007</title>
+  <title>CSE Paper Summary Submission System</title>
 </head>
 
 <body>
   <div class="row">
-    <div class="span8">
+    <div class="span8" py:if="not request.identity">
       <div class="hero-unit">
         <h3>CSE Paper Summary Submission</h3>
-        <p>Welcome to the University of Michigan CSE Paper Summary System. Please <a href="${tg.url('/login')}">login</a> in order to view your courses and submit paper reviews.</p>
+        <p>Welcome to the University of Michigan CSE Paper Summary System.</p>
+      </div>
+    </div>
+    <div class="span12" py:if="request.identity">
+      <div class="hero-unit">
+        <h3>CSE Paper Summary Submission</h3>
+        <p>Welcome to the University of Michigan CSE Paper Summary System.</p>
       </div>
     </div>
 		<div class="span4" id="loginform" py:if="not request.identity">
 			<br/>
 	    <form action="${tg.url('/login_handler', params=dict(came_from=came_from.encode('utf-8'), __logins=login_counter.encode('utf-8')))}" method="post" accept-charset="UTF-8">
 	      <h4>Login</h4>
-	      <label>uniqname:</label><input type="text" name="login"></input><br/>
+	      <label>username:</label><input type="text" name="login"></input><br/>
 	      <label>password:</label><input type="password" name="password"></input><br/>
 	      <input class="btn" type="submit" id="submit" value="Login" />
 	    </form>

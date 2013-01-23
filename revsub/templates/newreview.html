@@ -5,7 +5,7 @@
   <xi:include href="master.html" />
 
 	<head>
-	  <title>New Summary and Peer Review</title>
+	  <title>New Response and Peer Review</title>
 	</head>
 
 	<body>
@@ -15,7 +15,7 @@
 				<div class="span1"/>
 				<div class="span10">
 					<div py:for="peer in peer_review">
-						<h4>Summary Peer Review</h4>
+						<h4>Response Peer Review</h4>
 						<input type="hidden" name="${peer.id}_hmac" value="${hmacs[peer.id]}"/>
 						<div class="control-group">
 					    <label class="control-label" for="Title"><b>Paper</b></label>
@@ -67,7 +67,7 @@
 						<br/>
 					</div>
 				
-					<h4>Create New Summary</h4>
+					<h4>Create New Paper Response</h4>
 				
 					  <div class="control-group">
 					    <label class="control-label" for="Title"><b>Title</b></label>
