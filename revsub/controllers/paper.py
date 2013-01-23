@@ -40,7 +40,7 @@ class PaperController(BaseController):
                 JOIN courses c on c.students_id = g.id
                 JOIN papers p on c.id = p.course_id
                 LEFT JOIN paper_summaries s ON s.paper_id = p.id and s.student_id = u.id
-                LEFT JOIN (SELECT s.id, avg(r.rating) as avg_rating 
+                LEFT JOIN (SELECT s.id, avg((r.rating + r.insight_rating)/2) as avg_rating 
                     FROM paper_summaries s
                     JOIN summary_reviews r on s.id = r.summary_id
                     WHERE s.paper_id = :paper_id

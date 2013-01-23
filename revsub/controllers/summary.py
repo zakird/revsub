@@ -156,7 +156,7 @@ class SummaryController(BaseController):
                 z.num_reviews as num_reviews
             FROM papers p join paper_summaries s on p.id = s.paper_id
             LEFT JOIN (
-                SELECT s.id as id, avg(r.rating) as avg_rating,
+                SELECT s.id as id, avg((r.rating+r.insight_rating)/2) as avg_rating,
                     count(r.id) as num_reviews
                 FROM paper_summaries s JOIN summary_reviews r
                 ON s.id = r.summary_id
