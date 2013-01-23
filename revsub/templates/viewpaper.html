@@ -35,7 +35,7 @@
 				      <td><a href="/student/view?student_id=${r.user_id}">${r.display_name}</a></td>
 				      <td>${r.user_name}</td>
 							<td>${r.submitted_at if r.submitted_at else 'no submission'}</td>
-							<td>${r.avg_rating if r.avg_rating else '0.0'}</td>
+							<td>${r.avg_rating if r.avg_rating else 'no reviews'}</td>
 				    </tr>
 				  </tbody>
 				</table>
