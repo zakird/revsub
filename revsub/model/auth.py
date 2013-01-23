@@ -6,7 +6,7 @@ from hashlib import sha256
 
 from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Unicode, Integer, DateTime
-from sqlalchemy.orm import relation, synonym
+from sqlalchemy.orm import relation, synonym, column_property
 
 from revsub.model import DeclarativeBase, metadata, DBSession
 
@@ -31,6 +31,7 @@ class Group(DeclarativeBase):
     __tablename__ = 'groups'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
+    group_id = synonym("id", map_column=True)
     group_name = Column(Unicode(16), unique=True, nullable=False)
     display_name = Column(Unicode(255))
     created = Column(DateTime, default=datetime.now)
