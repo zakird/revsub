@@ -31,8 +31,8 @@ class Group(DeclarativeBase):
     __tablename__ = 'groups'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    group_id = synonym("id", map_column=True)
-    group_name = Column(Unicode(16), unique=True, nullable=False)
+    group_id = column_property(id) 
+    group_name = Column(Unicode(255), unique=True, nullable=False)
     display_name = Column(Unicode(255))
     created = Column(DateTime, default=datetime.now)
     users = relation('User', secondary=user_group_table, backref='groups')
@@ -48,7 +48,7 @@ class User(DeclarativeBase):
     __tablename__ = 'users'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    user_name = Column(Unicode(16), unique=True, nullable=False)
+    user_name = Column(Unicode(255), unique=True, nullable=False)
     email_address = Column(Unicode(255), unique=True, nullable=False)
     display_name = Column(Unicode(255))
     _password = Column('password', Unicode(128))
