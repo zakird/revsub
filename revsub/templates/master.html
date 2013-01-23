@@ -24,7 +24,7 @@
 						<li class="${('', 'active')[defined('page') and page=='summaries']}"><a href="${tg.url('/summary')}">My Summaries</a></li>
           </ul>
           <ul class="nav pull-right" py:if="tg.auth_stack_enabled">
-	           <li py:if="'manager' in tg.identity.groups"><a href="${tg.url('/admin')}">Administration</a></li>
+	           <li py:if="tg and tg.identity and tg.identity.groups and 'manager' in tg.identity.groups"><a href="${tg.url('/admin')}">Administration</a></li>
             <li py:if="not request.identity"><a href="${tg.url('/index')}">Login</a></li>
             <li py:if="request.identity"><a href="${tg.url('/logout_handler')}">Logout</a></li>
           </ul>
