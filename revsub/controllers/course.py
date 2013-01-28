@@ -24,14 +24,14 @@ class CourseController(BaseController):
             papers = DBSession.execute("""SELECT p.id as paper_id, s.id as summary_id, s.*, p.*, z.avg_rating,
                 z.num_reviews as num_reviews
             FROM papers p LEFT JOIN (
-                    SELECT s.id, s.paper_id from paper_summaries s WHERE s.student_id = :user_id) s
+                    SELECT id, paper_id from paper_summaries WHERE student_id = :user_id) s
             LEFT JOIN (
-                SELECT s.id as id, round(avg((r.rating+r.insight_rating)/2),2) as avg_rating,
+                SELECT s2.id as id, round(avg((r.rating+r.insight_rating)/2),2) as avg_rating,
                     count(r.id) as num_reviews
-                FROM paper_summaries s JOIN summary_reviews r
-                ON s.id = r.summary_id
-                GROUP BY s.id
-            ) z on s.id = z.id""",
+                FROM paper_summaries s2 JOIN summary_reviews r
+                ON s2.id = r.summary_id
+                GROUP BY s2.id
+            ) z on s.id = z.id WHERE p.course_id = course_id""",
                             dict(user_id=user.id, course_id = course.id)).fetchall()
             courses_e[course] = papers
         return dict(page="course", courses_enrolled=courses_e,
