@@ -21,7 +21,7 @@
           <a class="brand" href="#">Paper Review System</a>
           <ul class="nav nav-pills">
             <li class="${('', 'active')[defined('page') and page=='course']}"><a href="${tg.url('/course')}">My Courses</a></li>
-						<li class="${('', 'active')[defined('page') and page=='summaries']}"><a href="${tg.url('/summary')}">My Summaries</a></li>
+		<!--	<li class="${('', 'active')[defined('page') and page=='summaries']}"><a href="${tg.url('/summary')}">My Summaries</a></li> -->
           </ul>
           <ul class="nav pull-right" py:if="tg.auth_stack_enabled">
 	           <li py:if="tg and tg.identity and tg.identity.groups and 'managers' in tg.identity.groups"><a href="${tg.url('/admin')}">Administration</a></li>

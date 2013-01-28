@@ -21,11 +21,19 @@ class CourseController(BaseController):
         user = DBSession.query(User).filter(User.user_name == login).one()
         courses_e = {}
         for course in user.courses_enrolled_in:
-            r = DBSession.execute("""select p.id as paper_id, z.id as summary_id, p.download_url, p.name, p.due_date FROM papers p LEFT JOIN (
-                SELECT s.id, s.paper_id from paper_summaries s WHERE s.student_id = :user_id) z
-                ON p.id = z.paper_id where p.course_id = :course_id""",
+            papers = DBSession.execute("""SELECT p.id as paper_id, s.id as summary_id, s.*, p.*, z.avg_rating,
+                z.num_reviews as num_reviews
+            FROM papers p LEFT JOIN (
+                    SELECT s.id, s.paper_id from paper_summaries s WHERE s.student_id = :user_id) s
+            LEFT JOIN (
+                SELECT s.id as id, round(avg((r.rating+r.insight_rating)/2),2) as avg_rating,
+                    count(r.id) as num_reviews
+                FROM paper_summaries s JOIN summary_reviews r
+                ON s.id = r.summary_id
+                GROUP BY s.id
+            ) z on s.id = z.id WHERE s.student_id = :user_id""",
                             dict(user_id=user.id, course_id = course.id)).fetchall()
-            courses_e[course] = r
+            courses_e[course] = papers
         return dict(page="course", courses_enrolled=courses_e,
                         courses_taught=user.courses_taught)
         
