@@ -27,7 +27,8 @@
 								    <tr>
 											<th></th>
 								      <th>Paper</th>
-								      <th>Due</th>
+								      <th>Due Date</th>
+										<th>Score</th>
 								    </tr>
 								  </thead>
 								  <tbody>
@@ -37,7 +38,9 @@
 												<span py:if="r.summary_id"><a href="/summary/view?summary_id=${r.summary_id}"><button class="btn btn-mini btn-success" type="button">review</button></a></span>
 											</td>
 								      <td><a href="${r.download_url}">${r.name}</a></td>
+										
 								      <td>${r.due_date}</td>
+									<td>${r.avg_rating}</td>
 								    </tr>
 								  </tbody>
 								</table>
