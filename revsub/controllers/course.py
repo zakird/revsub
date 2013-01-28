@@ -31,7 +31,7 @@ class CourseController(BaseController):
                 FROM paper_summaries s JOIN summary_reviews r
                 ON s.id = r.summary_id
                 GROUP BY s.id
-            ) z on s.id = z.id WHERE s.student_id = :user_id""",
+            ) z on s.id = z.id""",
                             dict(user_id=user.id, course_id = course.id)).fetchall()
             courses_e[course] = papers
         return dict(page="course", courses_enrolled=courses_e,
