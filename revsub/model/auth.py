@@ -7,7 +7,7 @@ from hashlib import sha256
 from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Unicode, Integer, DateTime
 from sqlalchemy.orm import relation, synonym, column_property
-
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 from revsub.model import DeclarativeBase, metadata, DBSession
 
 __all__ = ['User', 'Group', 'Permission']
@@ -31,7 +31,6 @@ class Group(DeclarativeBase):
     __tablename__ = 'groups'
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    group_id = column_property(id) 
     group_name = Column(Unicode(255), unique=True, nullable=False)
     display_name = Column(Unicode(255))
     created = Column(DateTime, default=datetime.now)
@@ -43,6 +42,15 @@ class Group(DeclarativeBase):
     def __unicode__(self):
         return self.group_name
 
+    def _set_id(self, id):
+        self.id = id
+
+    def _get_id(self):
+        """Return the hashed version of the password."""
+        return self.id
+
+    group_id = synonym('id', descriptor=property(_get_id, _set_id))
+
 
 class User(DeclarativeBase):
     __tablename__ = 'users'
@@ -53,7 +61,7 @@ class User(DeclarativeBase):
     display_name = Column(Unicode(255))
     _password = Column('password', Unicode(128))
     created = Column(DateTime, default=datetime.now)
-    
+
     def __repr__(self):
         return ('<User: name=%s, email=%s, display=%s>' % (
                 self.user_name, self.email_address, self.display_name)).encode('utf-8')
@@ -129,3 +137,15 @@ class Permission(DeclarativeBase):
 
     def __unicode__(self):
         return self.permission_name
+
+    def _set_id(self, id):
+        self.id = id
+
+    def _get_id(self):
+        """Return the hashed version of the password."""
+        return self.id
+
+    permission_id = synonym('id', descriptor=property(_get_id, _set_id))
+
+
+
