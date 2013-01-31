@@ -34,7 +34,7 @@
 								  <tbody>
 								    <tr py:for="r in courses_enrolled[course]">
 											<td>
-												<a href="/summary/create?paper_id=${r.paper_id}"><button class="btn btn-mini btn-inverse" type="button" py:if="not r.summary_id">submit</button></a>
+												<a href="/summary/create?paper_id=${r.p_paper_id}"><button class="btn btn-mini btn-inverse" type="button" py:if="not r.summary_id">submit</button></a>
 												<span py:if="r.summary_id"><a href="/summary/view?summary_id=${r.summary_id}"><button class="btn btn-mini btn-success" type="button">review</button></a></span>
 											</td>
 								      <td><a href="${r.download_url}">${r.name}</a></td>
