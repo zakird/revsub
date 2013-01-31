@@ -21,7 +21,7 @@ class CourseController(BaseController):
         user = DBSession.query(User).filter(User.user_name == login).one()
         courses_e = {}
         for course in user.courses_enrolled_in:
-            papers = DBSession.execute("""SELECT s.id as summary_id, s.*, p.*, p.paper_id as p_paper_id, z.avg_rating,
+            papers = DBSession.execute("""SELECT s.id as summary_id, s.*, p.*, p.id as p_paper_id, z.avg_rating,
                 z.num_reviews as num_reviews
             FROM papers p LEFT JOIN (
                     SELECT id, paper_id from paper_summaries WHERE student_id = :user_id) s ON p.id = s.paper_id
