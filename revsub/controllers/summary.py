@@ -108,7 +108,7 @@ class SummaryController(BaseController):
             # figure out how which summaries have been reviewed
             s = set()
             for arg in kwargs:
-                val, name = arg.split("_")
+                name, val = arg.split("_")
                 s.add(val)
             for summary_id in s:
                 summary = DBSession.query(PaperSummary).filter(PaperSummary.id == summary_id).first()
@@ -120,13 +120,13 @@ class SummaryController(BaseController):
                 hmac = kwargs[k_hmac]
                 if not self._check_peer_review_hmac(user, summary, str(hmac)):
                     redirect('/error', params=dict(msg="invalid peer hmac received"))
-                k_rating_reading = "_".join([summary_id,"reading"])
+                k_rating_reading = "_".join(["reading", summary_id])
                 if k_rating_reading not in kwargs:
                     redirect('/error', params=dict(msg="incomplete requested received"))
                 rating_reading = int(kwargs[k_rating_reading])
                 if rating_reading > 3 or rating_reading < 0:
                     redirect('/error', params=dict(msg="invalid value for reading rating"))
-                k_rating_critique = "_".join([summary_id,"critique"])  
+                k_rating_critique = "_".join(["critique", summary_id])  
                 if k_rating_critique not in kwargs:
                     redirect('/error', params=dict(msg="incomplete requested received"))
                 rating_critique = int(kwargs[k_rating_critique])

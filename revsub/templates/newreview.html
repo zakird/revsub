@@ -9,6 +9,8 @@
 	</head>
 
 	<body>
+<script src="/javascript/jquery.js"></script>
+<script src="/javascript/jquery.validate.js"></script>
 		<div class="row">
 			<form class="form-horizontal" method="post" action="/summary/_create" id="submitreview">
 				<input type="hidden" name="paper_id" value="${paper.id}"/>
@@ -23,7 +25,7 @@
 					      <p><a href="${peer.paper.download_url}">${peer.paper.name}</a></p>
 					    </div>
 					  </div>
-						<div class="control-group">
+					<div class="control-group">
 					    <label class="control-label" for="abstract"><b>Abstract</b></label>
 					    <div class="controls">
 					      <p><small>${peer.paper.abstract}</small></p>
@@ -39,8 +41,8 @@
 						<div class="control-group">
 					    <label class="control-label" for="summary"><b>Did this person read the paper?</b></label>
 					<div class="controls">
-					    <select name="${peer.id}_reading">
-							  <option>Select Rating</option>
+					    <select name="reading_${peer.id}" class="required">
+							  <option value="">Select Rating</option>
 							  <option value="0">0 -- No, only the title</option>
 							  <option value="1">1 -- Somewhat, they probably skimmed it</option>
 							  <option value="2">2 -- Yes, they read it pretty carefully</option>
@@ -51,8 +53,8 @@
 						<div class="control-group">
 						    <label class="control-label" for="summary"><b>Did this person think carefully about the paper?</b></label>
 						<div class="controls">
-						    <select name="${peer.id}_critique">
-								  <option>Select Rating</option>
+						    <select name="critique_${peer.id}" class="required">
+								  <option value="">Select Rating</option>
 								  <option value="0">0 -- No, they just spit back the contents</option>
 								  <option value="1">1 -- Somewhat, this seems like shallow verbiage</option>
 								  <option value="2">2 -- Yes, they made some good points</option>
@@ -87,7 +89,7 @@
 				
 					  <div class="control-group">
 					    <label class="control-label" for="summary"><b>Summary</b></label>
-					    <div class="controls"><textarea rows="25" class="span8" name="summary"></textarea>
+					    <div class="controls"><textarea rows="25" class="span8 required" name="summary"></textarea>
 					    </div>
 					  </div>
 				
@@ -100,18 +102,9 @@
 				</div>
 			</form>
 		</div>
-		<script type="text/javascript">
-			$("#submitreview").validate({
-			    rules: {
-			        summary: {
-			            required: true,
-			            minlength: 2,
-			        },
-			    },
-			    messages: {
-			        summary: 'Please enter a summary.',
-			    }
-			});
+		 <script type="text/javascript">
+			$("#submitreview").validate();
 		</script>
+               
 	</body>
 </html>

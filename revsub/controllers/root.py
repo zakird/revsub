@@ -5,7 +5,7 @@ from tg import expose, flash, require, url, lurl, request, redirect, tmpl_contex
 from tg.i18n import ugettext as _, lazy_ugettext as l_
 from tg import predicates
 from revsub import model
-from revsub.model import DBSession, metadata
+from revsub.model import DBSession, metadata, User
 from tgext.admin.tgadminconfig import TGAdminConfig
 from tgext.admin.controller import AdminController
 
@@ -39,6 +39,23 @@ class RootController(BaseController):
                     came_from=came_from)
 
     login = index
+
+    @expose('revsub.templates.myaccount')
+    def account(self):
+        login = request.environ.get('repoze.who.identity')\
+            .get('repoze.who.userid')
+        user = DBSession.query(User).filter(User.user_name == login).one() 
+        return dict(user=user)
+
+    @expose()
+    def _reset_password(self, password1, password2):
+        if password1 != password2:
+            redirect("/error")
+        login = request.environ.get('repoze.who.identity')\
+            .get('repoze.who.userid')
+        user = DBSession.query(User).filter(User.user_name == login).one()
+        user.password = password1
+        redirect('/account')
 
     @expose()
     def post_login(self, came_from=lurl('/')):
