@@ -38,6 +38,19 @@ class SummaryController(BaseController):
         return bool(DBSession.query(PaperSummary)\
                         .filter(PaperSummary.student_id == user.id)\
                         .filter(PaperSummary.paper_id == paper.id).first())
+
+    def _has_already_submitted_review(self, user, summary):
+        return bool(DBSession.query(StudentSummaryReview)\
+                        .filter(StudentSummaryReview.creator_id == user.id)\
+                        .filter(StudentSummaryReview.status == 'complete')\
+                        .filter(StudentSummaryReview.summary_id == summary.id).first())
+
+
+    def _get_unfinished_peer_reviews(self, user):
+        return DBSession.query(PaperSummary)\
+            .join(PaperSummary.reviews)\
+            .filter(StudentSummaryReview.creator_id == user.id)\
+            .filter(StudentSummaryReview.status == 'incomplete').all()
                 
     def _get_summaries_to_peer_review(self, user, num_summaries=2):
         # restrictions we want:
@@ -55,11 +68,17 @@ class SummaryController(BaseController):
         where s.paper_id in (select paper_id
             FROM paper_summaries WHERE student_id = :user_id)
         AND s.student_id <> :user_id
-        GROUP BY s.id ORDER BY count(r.id) DESC LIMIT %i) z ON
-        s.id = z.id""" % num_summaries
+        GROUP BY s.id ORDER BY count(r.id), RAND() DESC LIMIT %i) z ON
+        s.id = z.id
+        where s.id not in (
+            SELECT s.id from paper_summaries s
+                JOIN summary_reviews r on s.id = r.summary_id
+            WHERE r.creator_id = :user_id)""" % num_summaries
         return DBSession.query(PaperSummary)\
                         .from_statement(sql_s).params(user_id=user.id).all()
-    
+
+    MAX_PEER_REVIEWS = 2
+ 
     @expose('revsub.templates.newreview')
     def create(self, paper_id):
         login = request.environ.get('repoze.who.identity').get('repoze.who.userid')
@@ -77,7 +96,27 @@ class SummaryController(BaseController):
         if self._check_user_submitted_paper(user, paper):
             redirect('/error', params=dict(
                             msg="user already submitted summary for this paper"))
-        summaries_to_review = self._get_summaries_to_peer_review(user)
+        # check if the user has any "reserved" summaries that they need to review
+        # this prevents users from just refreshing and getting new summaries until
+        # they receive their friends summary or waiting until all the others have
+        # been completed by other students.
+        reserved = self._get_unfinished_peer_reviews(user)
+        num_adtl_needed = self.MAX_PEER_REVIEWS - len(reserved)
+        new_summaries = self._get_summaries_to_peer_review(user, num_adtl_needed)
+        # for each of the new reviews, we need to start an "incomplete" review so
+        # that it resurfaces in the future.
+        summaries_to_review = []
+        for summary in reserved:
+            summaries_to_review.append(summary)
+        for summary in new_summaries:
+            review = StudentSummaryReview(
+                            summary = summary,
+                            creator = user,
+                            status = 'incomplete'
+            )
+            DBSession.add(review)
+            summaries_to_review.append(summary)
+        
         hmacs = {}
         for s in summaries_to_review:
             hmacs[s.id] = self._generate_peer_review_hmac(user, s)
@@ -114,7 +153,7 @@ class SummaryController(BaseController):
                 summary = DBSession.query(PaperSummary).filter(PaperSummary.id == summary_id).first()
                 if not summary:
                     redirect('/error', params=dict(msg="invalid summary id received"))
-                k_hmac = "_".join([summary_id,"hmac"])
+                k_hmac = "_".join(["hmac", summary_id])
                 if k_hmac not in kwargs:
                     redirect('/error', params=dict(msg="incomplete requested received"))
                 hmac = kwargs[k_hmac]
@@ -132,19 +171,23 @@ class SummaryController(BaseController):
                 rating_critique = int(kwargs[k_rating_critique])
                 if rating_critique > 3 or rating_critique < 0:
                     redirect('/error', params=dict(msg="invalid value for critique rating"))
-                k_comments = "_".join([summary_id,"comments"])
+                k_comments = "_".join(["comments", summary_id])
                 if k_comments not in kwargs:
                     redirect('/error', params=dict(msg="incomplete requested received"))
+                if self._has_already_submitted_review(user, summary):
+                    redirect('/error', params=dict(msg="user has already submitted a review for this summary"))
                 comments = str(kwargs[k_comments])
-                
-                response = StudentSummaryReview(
-                                summary = summary,
-                                reading_rating = rating_reading,
-                                insight_rating = rating_critique,
-                                comments = comments,
-                                creator = user
-                )
-                DBSession.add(response)
+                # because we "reserved" this earlier, we should have
+                # database records already in place that we just need
+                # to update. if not then something is broken...
+                response = DBSession.query(StudentSummaryReview)\
+                                .filter(StudentSummaryReview.creator_id == user.id)\
+                                .filter(StudentSummaryReview.summary_id == summary.id)\
+                                .filter(StudentSummaryReview.status == 'incomplete').one()
+                response.rating = rating_reading
+                response.insight_rating = rating_critique
+                response.comments = comments
+                response.status = 'complete'
         redirect("/course")
                                 
     @expose('revsub.templates.mysummaries') 
@@ -160,6 +203,7 @@ class SummaryController(BaseController):
                     count(r.id) as num_reviews
                 FROM paper_summaries s JOIN summary_reviews r
                 ON s.id = r.summary_id
+                WHERE r.status = 'complete'
                 GROUP BY s.id
             ) z on s.id = z.id WHERE s.student_id = :user_id""", dict(user_id=user.id))
         return dict(page="summaries", summaries=summaries)
@@ -182,5 +226,4 @@ class SummaryController(BaseController):
             redirect('/error', params=dict(msg="invalid permissions to view summary"))
         paper = summary.paper
         return dict(page="viewreview", paper=paper, summary=summary)
-               
-        
+

@@ -30,6 +30,7 @@ class CourseController(BaseController):
                     count(r.id) as num_reviews
                 FROM paper_summaries s2 JOIN summary_reviews r
                 ON s2.id = r.summary_id
+                WHERE r.status = 'complete'
                 GROUP BY s2.id
             ) z on s.id = z.id WHERE p.course_id = :course_id""",
                             dict(user_id=user.id, course_id = course.id)).fetchall()

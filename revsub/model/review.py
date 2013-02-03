@@ -44,14 +44,17 @@ class SummaryReview(DeclarativeBase):
     creator_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     created_at = Column(DateTime, default=datetime.now)
     creator = relation(User)
+    status = Column(Unicode(255))
     
     rating = Column(Integer)
     insight_rating = Column(Integer)
     comments = Column(UnicodeText)
     
-    def __init__(self, summary, reading_rating,
-                    insight_rating, comments, creator):
+    def __init__(self, summary, creator, status='incomplete', 
+                    reading_rating=None,
+                    insight_rating=None, comments=None):
         self.summary_id = summary.id
+        self.status = status
         self.rating = reading_rating
         self.insight_rating = insight_rating
         self.comments = comments

@@ -40,7 +40,7 @@ class StudentController(BaseController):
                 LEFT JOIN (SELECT s.id, round(avg((r.rating+r.insight_rating)/2),2) as avg_rating 
                     FROM paper_summaries s
                     JOIN summary_reviews r on s.id = r.summary_id
-                    WHERE s.student_id = :user_id
+                    WHERE s.student_id = :user_id AND r.status = 'complete'
                     GROUP BY s.id
                 ) z on s.id = z.id
                 WHERE u.id = :user_id and c.id = :course_id and (s.student_id =:user_id or s.student_id is null)"""

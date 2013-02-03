@@ -4,107 +4,101 @@
 
   <xi:include href="master.html" />
 
-	<head>
-	  <title>New Response and Peer Review</title>
-	</head>
+  <head>
+    <title>New Response and Peer Review</title>
+  </head>
 
-	<body>
-<script src="/javascript/jquery.js"></script>
-<script src="/javascript/jquery.validate.js"></script>
-		<div class="row">
-			<form class="form-horizontal" method="post" action="/summary/_create" id="submitreview">
-				<input type="hidden" name="paper_id" value="${paper.id}"/>
-				<div class="span1"/>
-				<div class="span10">
-					<div py:for="peer in peer_review">
-						<h4>Response Peer Review</h4>
-						<input type="hidden" name="${peer.id}_hmac" value="${hmacs[peer.id]}"/>
-						<div class="control-group">
-					    <label class="control-label" for="Title"><b>Paper</b></label>
-					    <div class="controls">
-					      <p><a href="${peer.paper.download_url}">${peer.paper.name}</a></p>
-					    </div>
-					  </div>
-					<div class="control-group">
-					    <label class="control-label" for="abstract"><b>Abstract</b></label>
-					    <div class="controls">
-					      <p><small>${peer.paper.abstract}</small></p>
-					    </div>
-					  </div>			
-						<div class="control-group">
-					    <label class="control-label" for="abstract"><b>Summary</b></label>
-					    <div class="controls">
-					      <p>${Markup.escape(peer.summary)}</p>
-					    </div>
-					  </div>
-			
-						<div class="control-group">
-					    <label class="control-label" for="summary"><b>Did this person read the paper?</b></label>
-					<div class="controls">
-					    <select name="reading_${peer.id}" class="required">
-							  <option value="">Select Rating</option>
-							  <option value="0">0 -- No, only the title</option>
-							  <option value="1">1 -- Somewhat, they probably skimmed it</option>
-							  <option value="2">2 -- Yes, they read it pretty carefully</option>
-							  <option value="3">3 -- Wow, they must have been one of the authors</option>
-							</select>
-					    </div>
-					  </div>
-						<div class="control-group">
-						    <label class="control-label" for="summary"><b>Did this person think carefully about the paper?</b></label>
-						<div class="controls">
-						    <select name="critique_${peer.id}" class="required">
-								  <option value="">Select Rating</option>
-								  <option value="0">0 -- No, they just spit back the contents</option>
-								  <option value="1">1 -- Somewhat, this seems like shallow verbiage</option>
-								  <option value="2">2 -- Yes, they made some good points</option>
-								  <option value="3">3 -- Wow, this is really insightful</option>
-								</select>
-						    </div>
-						  </div>
-			
-					  <div class="control-group">
-					    <label class="control-label" for="summary"><b>Comments</b></label>
-					    <div class="controls"><textarea rows="3" class="span8" name="${peer.id}_comments"></textarea>
-					    </div>
-					  </div>
-						<br/>
-					</div>
-				
-					<h4>Create New Paper Response</h4>
-				
-					  <div class="control-group">
-					    <label class="control-label" for="Title"><b>Title</b></label>
-					    <div class="controls">
-					      <p><a href="${paper.download_url}">${paper.name}</a></p>
-					    </div>
-					  </div>
-				
-						<div class="control-group">
-					    <label class="control-label" for="abstract"><b>Abstract</b></label>
-					    <div class="controls">
-					      <p><small>${paper.abstract}</small></p>
-					    </div>
-					  </div>
-				
-					  <div class="control-group">
-					    <label class="control-label" for="summary"><b>Summary</b></label>
-					    <div class="controls"><textarea rows="25" class="span8 required" name="summary"></textarea>
-					    </div>
-					  </div>
-				
-					  <div class="control-group">
-					    <div class="controls">
-					      <button type="submit" class="btn btn-primary">Submit</button>
-					    </div>
-					  </div>
-				
-				</div>
-			</form>
-		</div>
-		 <script type="text/javascript">
-			$("#submitreview").validate();
-		</script>
+  <body>
+    <script src="/javascript/jquery.js"></script>
+    <script src="/javascript/jquery.validate.js"></script>
+    <div class="row">
+      <form class="form-horizontal" method="post" action="/summary/_create" id="submitreview">
+        <input type="hidden" name="paper_id" value="${paper.id}"/>
+        <div class="span1"/>
+        <div class="span10">
+          <div py:for="peer in peer_review">
+            <h4>Response Peer Review</h4>
+            <input type="hidden" name="hmac_${peer.id}" value="${hmacs[peer.id]}"/>
+            <div class="control-group">
+              <label class="control-label" for="Title"><b>Paper</b></label>
+              <div class="controls">
+                <p><a href="${peer.paper.download_url}">${peer.paper.name}</a></p>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="abstract"><b>Summary</b></label>
+              <div class="controls">
+                <p><py:for each="line in peer.summary.split('\n')">${line}<br/></py:for></p>
+              </div>
+            </div>
+      
+            <div class="control-group">
+              <label class="control-label" for="summary"><b>Did this person read the paper?</b></label>
+          <div class="controls">
+              <select name="reading_${peer.id}" class="required">
+                <option value="">Select Rating</option>
+                <option value="0">0 -- No, only the title</option>
+                <option value="1">1 -- Somewhat, they probably skimmed it</option>
+                <option value="2">2 -- Yes, they read it pretty carefully</option>
+                <option value="3">3 -- Wow, they must have been one of the authors</option>
+              </select>
+              </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="summary"><b>Did this person think carefully about the paper?</b></label>
+            <div class="controls">
+                <select name="critique_${peer.id}" class="required">
+                  <option value="">Select Rating</option>
+                  <option value="0">0 -- No, they just spit back the contents</option>
+                  <option value="1">1 -- Somewhat, this seems like shallow verbiage</option>
+                  <option value="2">2 -- Yes, they made some good points</option>
+                  <option value="3">3 -- Wow, this is really insightful</option>
+                </select>
+                </div>
+              </div>
+      
+            <div class="control-group">
+              <label class="control-label" for="summary"><b>Comments</b></label>
+              <div class="controls"><textarea rows="3" class="span8" name="comments_${peer.id}"></textarea>
+              </div>
+            </div>
+            <br/>
+          </div>
+        
+          <h4>Create New Paper Response</h4>
+        
+            <div class="control-group">
+              <label class="control-label" for="Title"><b>Title</b></label>
+              <div class="controls">
+                <p><a href="${paper.download_url}">${paper.name}</a></p>
+              </div>
+            </div>
+        
+            <div class="control-group">
+              <label class="control-label" for="abstract"><b>Abstract</b></label>
+              <div class="controls">
+                <p><small>${paper.abstract}</small></p>
+              </div>
+            </div>
+        
+            <div class="control-group">
+              <label class="control-label" for="summary"><b>Summary</b></label>
+              <div class="controls"><textarea rows="25" class="span8 required" name="summary"></textarea>
+              </div>
+            </div>
+        
+            <div class="control-group">
+              <div class="controls">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+        
+        </div>
+      </form>
+    </div>
+     <script type="text/javascript">
+      $("#submitreview").validate();
+    </script>
                
-	</body>
+  </body>
 </html>

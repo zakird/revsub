@@ -43,7 +43,7 @@ class PaperController(BaseController):
                 LEFT JOIN (SELECT s.id, round(avg((r.rating + r.insight_rating)/2),2) as avg_rating 
                     FROM paper_summaries s
                     JOIN summary_reviews r on s.id = r.summary_id
-                    WHERE s.paper_id = :paper_id
+                    WHERE s.paper_id = :paper_id AND r.status = 'complete'
                     GROUP BY s.id
                 ) z on s.id = z.id
                 WHERE p.id = :paper_id"""

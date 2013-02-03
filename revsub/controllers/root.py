@@ -29,6 +29,7 @@ class RootController(BaseController):
 
     def _before(self, *args, **kw):
         tmpl_context.project_name = "revsub"
+        tmpl_context.version = "1.1.0"
 
     @expose('revsub.templates.index')
     def index(self, came_from=lurl('/courses')):
