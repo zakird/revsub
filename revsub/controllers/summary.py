@@ -12,7 +12,7 @@ from revsub.model import DeclarativeBase, metadata, DBSession,\
 __all__ = ['SummaryController']
 
 class SummaryController(BaseController):
-    SECRET = "NtnAwmAKfLeL5vQnYdzzpdXMCJtzKHnRe3fttCzLKFmx4dJBYboZ752Ganc2EFx7"
+    SECRET = "NtnASilFJ23304SkdjfskdjhCJtzKHnRe3fttCzLKFmx4dJBYboZ752Ganc2EFx"
 
     allow_only = Any(has_permission('student'), has_permission('instructor'))
     
@@ -125,6 +125,7 @@ class SummaryController(BaseController):
     
     @expose()
     def _create(self, paper_id, summary, **kwargs):
+        summary = summary.encode('ascii', 'replace')
         login = request.environ.get('repoze.who.identity').get('repoze.who.userid')
         user = DBSession.query(User).filter(User.user_name == login).one()
         paper = self._check_valid_paper(int(paper_id))

@@ -2,6 +2,7 @@
 """Main Controller"""
 
 from tg import expose, flash, require, url, lurl, request, redirect, tmpl_context
+from tg.predicates import has_permission, Any, is_user, not_anonymous
 from tg.i18n import ugettext as _, lazy_ugettext as l_
 from tg import predicates
 from revsub import model
@@ -41,6 +42,7 @@ class RootController(BaseController):
 
     login = index
 
+    @require(not_anonymous())
     @expose('revsub.templates.myaccount')
     def account(self):
         login = request.environ.get('repoze.who.identity')\
@@ -49,12 +51,17 @@ class RootController(BaseController):
         return dict(user=user)
 
     @expose()
-    def _reset_password(self, password1, password2):
+    def _reset_password(self, password1, password2, old_password):
         if password1 != password2:
+            redirect("/error")
+        if len(password1) > 256 or len(password1) < 6:
             redirect("/error")
         login = request.environ.get('repoze.who.identity')\
             .get('repoze.who.userid')
         user = DBSession.query(User).filter(User.user_name == login).one()
+        if not user.validate_password(old_password):
+            flash(_('Error! Incorrect original password.'), 'warning')
+            redirect('/account')
         user.password = password1
         redirect('/account')
 

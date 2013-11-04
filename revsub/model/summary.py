@@ -2,7 +2,7 @@ from datetime import datetime
 from sqlalchemy import *
 from sqlalchemy.orm import mapper, relation
 from sqlalchemy import Table, ForeignKey, Column
-from sqlalchemy.types import Integer, Unicode, UnicodeText
+from sqlalchemy.types import Integer, Unicode, UnicodeText, Text
 from sqlalchemy.orm import relation, backref
 
 from revsub.model.paper import Paper

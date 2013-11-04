@@ -49,4 +49,65 @@ class PaperController(BaseController):
                 WHERE p.id = :paper_id"""
         summaries = DBSession.execute(sql_s, dict(paper_id=paper_id)).fetchall()
         return dict(page="viewpaper", paper=paper, summaries=summaries)
-               
+
+    @expose('revsub.templates.editpaper') 
+    def new(self, course_id):
+        login = request.environ.get('repoze.who.identity')\
+                        .get('repoze.who.userid')
+        user = DBSession.query(User)\
+                        .filter(User.user_name == login).one()
+        course = DBSession.query(Course).filter(Course.id == int(course_id)).one()
+        if user not in course.instructors.users:
+            redirect('/error', params=dict(msg="invalid permissions to view course"))
+        return dict(page="createpaper", course=course, paper=None)
+
+    @expose('revsub.templates.editpaper') 
+    def edit(self, paper_id):
+        login = request.environ.get('repoze.who.identity')\
+                        .get('repoze.who.userid')
+        user = DBSession.query(User)\
+                        .filter(User.user_name == login).one()
+        paper = DBSession.query(Paper)\
+                        .filter(Paper.id == int(paper_id)).first()
+        if not paper:
+            redirect('/error',
+                    params=dict(msg="invalid paper"))
+        if not self._can_view_paper(user, paper):
+            redirect('/error',
+                    params=dict(msg="invalid permissions to view paper"))
+        return dict(page="editpaper", paper=paper, course=paper.course)
+
+    @expose()
+    def save(self, paper_id, title, downloadurl, abstract, course_id, duedate):
+        login = request.environ.get('repoze.who.identity')\
+                        .get('repoze.who.userid')
+        user = DBSession.query(User)\
+                        .filter(User.user_name == login).one()
+        course = DBSession.query(Course).filter(Course.id == int(course_id)).one()
+
+        if paper_id != '':
+       	    paper = DBSession.query(Paper)\
+                        .filter(Paper.id == int(paper_id)).first()
+            if not paper:
+                redirect('/error',
+                        params=dict(msg="invalid paper"))
+            if not self._can_view_paper(user, paper):
+                redirect('/error',
+                        params=dict(msg="invalid permissions to view paper"))
+            paper.name = str(title)
+            paper.download_url = str(downloadurl)
+            paper.abstract = str(abstract)
+            paper.due_date = duedate
+        else:
+            paper = Paper()
+            paper.name = title.encode('ascii', 'replace')
+            paper.download_url = downloadurl
+            paper.abstract = abstract.encode('ascii', 'replace')
+            paper.created_by = user.id
+            paper.due_date = duedate
+
+            paper.course_id = course_id
+            DBSession.add(paper)
+            DBSession.flush()
+        redirect('/paper/view?paper_id=%i' % paper.id)
+ 

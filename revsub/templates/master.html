@@ -3,13 +3,20 @@
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip="">
 <head py:match="head" py:attrs="select('@*')">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta charset="${response.charset}" />
   <title py:if="False">Review Submission Framework</title>
   <meta py:replace="select('*')"/>
   <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/bootstrap.min.css')}" />
   <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/bootstrap-responsive.min.css')}" />
+  <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/graphs.css')}" />
   <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/style.css')}" />
+    <script src="${tg.url('/javascript/jquery.js')}"></script>
+    <script src="${tg.url('/javascript/bootstrap.js')}"></script>
+    <script src="/javascript/d3.v3.min.js" charset="utf-8"></script>
+    <script src="/javascript/nv.d3.min.js" charset="utf-8"></script>
+    <script src="/javascript/scatter.js" charset="utf-8"></script>
 </head>
 
 <body py:match="body" py:attrs="select('@*')">
@@ -46,8 +53,6 @@
       revsub · version 1.1.0<span py:if="request.identity"> · ${request.identity['repoze.who.userid']}</span> · ${h.datetime.now().strftime("%m/%d/%Y %H:%m")}
     </footer>
 
-    <script src="${tg.url('/javascript/jquery.js')}"></script>
-    <script src="${tg.url('/javascript/bootstrap.js')}"></script>
   </div>
 </body>
 </html>
