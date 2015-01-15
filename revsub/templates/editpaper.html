@@ -1,0 +1,66 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <xi:include href="master.html" />
+
+  <head>
+    <title py:if="paper">Edit Paper</title>
+    <title py:if="not paper">Create Paper</title>
+  </head>
+
+  <body>
+    <script src="/javascript/jquery.js"></script>
+    <script src="/javascript/jquery.validate.js"></script>
+    <div class="row">
+      <form class="form-horizontal" method="post" action="/paper/save" id="editpaper">
+        <input type="hidden" name="paper_id" value="${paper.id if paper else ''}"/>
+        <input type="hidden" name="course_id" value="${course.id}"/>
+        <div class="span1"/>
+        <div class="span10">
+       
+          <h4 py:if="paper">Edit Paper</h4>
+          <h4 py:if="not paper">Create Paper</h4>
+        
+            <div class="control-group">
+              <label class="control-label" for="Title"><b>Title</b></label>
+              <div class="controls"><textarea rows="1" class="span7 required" name="title">${paper.name if paper else ''}</textarea></div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="Course"><b>Course</b></label>
+              <div class="controls">
+                <p>${course.name}</p>
+              </div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="Title"><b>Download URL</b></label>
+              <div class="controls"><textarea rows="1" class="span7" name="downloadurl">${paper.download_url if paper else ''}</textarea></div>
+            </div>
+
+	    <div class="control-group">
+              <label class="control-label" for="Title"><b>Due Date</b></label>
+              <div class="controls"><textarea rows="1" class="span7" name="duedate">${paper.due_date if paper else ''}</textarea></div>
+            </div>
+
+            <div class="control-group">
+              <label class="control-label" for="abstract"><b>Abstract</b></label>
+              <div class="controls"><textarea rows="10" class="span7 required" name="abstract">${paper.abstract if paper else ''}</textarea></div>
+            </div>
+        
+            <div class="control-group">
+              <div class="controls">
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+        
+        </div>
+      </form>
+    </div>
+     <script type="text/javascript">
+      $("#editpaper").validate();
+    </script>
+               
+  </body>
+</html>

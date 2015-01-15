@@ -28,7 +28,7 @@
             <div class="control-group">
               <label class="control-label" for="abstract"><b>Summary</b></label>
               <div class="controls">
-                <p><py:for each="line in peer.summary.split('\n')">${line}<br/></py:for></p>
+		<p><py:for each="line in peer.summary.encode('ascii','replace').split('\n')">${line}<br/></py:for></p>
               </div>
             </div>
       

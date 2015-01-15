@@ -12,7 +12,7 @@ from revsub.model import DeclarativeBase, metadata, DBSession,\
 __all__ = ['SummaryController']
 
 class SummaryController(BaseController):
-    SECRET = "NtnAwmAKfLeL5vQnYdzzpdXMCJtzKHnRe3fttCzLKFmx4dJBYboZ752Ganc2EFx7"
+    SECRET = "NtnASilFJ23304SkdjfskdjhCJtzKHnRe3fttCzLKFmx4dJBYboZ752Ganc2EFx"
 
     allow_only = Any(has_permission('student'), has_permission('instructor'))
     
@@ -125,6 +125,8 @@ class SummaryController(BaseController):
     
     @expose()
     def _create(self, paper_id, summary, **kwargs):
+        punctuation = { 0x2018:0x27, 0x2019:0x27, 0x201C:0x22, 0x201D:0x22 }
+        summary = summary.translate(punctuation).encode('ascii', 'replace')
         login = request.environ.get('repoze.who.identity').get('repoze.who.userid')
         user = DBSession.query(User).filter(User.user_name == login).one()
         paper = self._check_valid_paper(int(paper_id))
@@ -220,10 +222,13 @@ class SummaryController(BaseController):
         login = request.environ.get('repoze.who.identity').get('repoze.who.userid')
         user = DBSession.query(User).filter(User.user_name == login).one()
         summary = DBSession.query(PaperSummary).filter(PaperSummary.id == int(summary_id)).first()
+        course = summary.paper.course
+	is_instructor = user in course.instructors.users
+
         if not summary:
             redirect('/error', params=dict(msg="invalid paper summary"))
         if not self._can_view_summary(summary, user):
             redirect('/error', params=dict(msg="invalid permissions to view summary"))
         paper = summary.paper
-        return dict(page="viewreview", paper=paper, summary=summary)
+        return dict(page="viewreview", paper=paper, summary=summary, is_instructor=is_instructor)
 

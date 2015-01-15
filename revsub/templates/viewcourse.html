@@ -4,108 +4,276 @@
 
   <xi:include href="master.html"/>
 
-	<head>
-	  <title>View Course</title>
-	</head>
-	<body>
-		<div class="row">
-			<div class="span1"/>
-			<div class="span10">
-				<h3>${course.name}</h3>
-				<div class="accordion" id="accordion2">
-				  <div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-				        <b>Course Instructors</b>
-				      </a>
-				    </div>
-				    <div id="collapseOne" class="accordion-body collapse">
-				      <div class="accordion-inner">
-				        <table class="table table-striped">
-								  <thead>
-								    <tr>
-											<th></th>
-								      <th>Name</th>
-								      <th>Login</th>
-											<th>Email</th>
-								    </tr>
-								  </thead>
-								  <tbody>
-								    <tr py:for="instructor in instructors">
-											<td>
-												
-											</td>
-								      <td>${instructor.display_name}</td>
-								      <td>${instructor.user_name}</td>
-											<td>${instructor.user_name}</td>
-								    </tr>
-								  </tbody>
-								</table>
-				      </div>
-				    </div>
-				  </div>
-				  <div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-				        <b>Enrolled Students</b>
-				      </a>
-				    </div>
-				    <div id="collapseTwo" class="accordion-body collapse">
-				      <div class="accordion-inner">
-				        <table class="table table-striped table-condensed">
-								  <thead>
-								    <tr>
-											<th></th>
-								      <th>Name</th>
-								      <th>Login</th>
-											<th>Email</th>
-								    </tr>
-								  </thead>
-								  <tbody>
-								    <tr py:for="student in students">
-											<td>
-											<a href="/student/view?student_id=${student.id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
-											</td>
-								      <td>${student.display_name}</td>
-								      <td>${student.user_name}</td>
-                      <td><a href="mailto:${student.email_address}">${student.email_address}</a></td>
-								    </tr>
-								  </tbody>
-								</table>
-				      </div>
-				    </div>
-				  </div>
-					<div class="accordion-group">
-				    <div class="accordion-heading">
-				      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
-				        <b>Assigned Papers</b>
-				      </a>
-				    </div>
-				    <div id="collapseThree" class="accordion-body collapse">
-				      <div class="accordion-inner">
-				        <table class="table table-striped table-condensed">
-								  <thead>
-								    <tr>
-											<th></th>
-								      <th>Paper</th>
-								      <th>Due Date</th>
-								    </tr>
-								  </thead>
-								  <tbody>
-								    <tr py:for="paper in papers	">
-											<td>
-												<a href="/paper/view?paper_id=${paper.id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
-											</td>
-								      <td><a href="${paper.download_url}">${paper.name}</a></td>
-								      <td>${paper.due_date.strftime("%m/%d/%Y")}</td>
-								    </tr>
-								  </tbody>
-								</table>
-				      </div>
-				    </div>
-				  </div>
-				</div>
-			</div>
-		</div>
-	</body>
+  <head>
+    <title>View Course</title>
+  </head>
+  <body>
+    <div class="row">
+      <div class="span1"/>
+      <div class="span10">
+        <h3>${course.name}</h3>
+        <div class="accordion" id="accordion2">
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne"><b>Course Instructors</b> (${len(instructors)})</a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <table class="table table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th>Login</th>
+                      <th>Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr py:for="instructor in instructors">
+                      <td>
+                        
+                      </td>
+                      <td>${instructor.display_name}</td>
+                      <td>${instructor.user_name}</td>
+                      <td>${instructor.user_name}@umich.edu</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                <b>Enrolled Students</b> (${len(students)})
+              </a>
+            </div>
+            <div id="collapseTwo" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <table class="table table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                <th>All Reading</th>
+                <th>All Insight</th>
+                <th>NZ Reading</th>
+                <th>NZ Insight</th>
+                <th>Submitted</th>
+                      <th>Login</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr py:for="student in students">
+                      <td>
+                      <a href="/student/view?student_id=${student.id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
+                      </td>
+                      <td>${student.display_name.replace(",", ", ")}</td>
+                      <td>${student.avg_reading}
+		        <span class="badge badge-important" py:if="s_avg_reading.get_stddev(student.avg_reading) == -4 and student.avg_reading > 0">-4</span>
+                        <span class="badge badge-important" py:if="s_avg_reading.get_stddev(student.avg_reading) == -3">-3</span>
+                        <span class="badge badge-warning" py:if="s_avg_reading.get_stddev(student.avg_reading) == -2">-2</span>
+                        <span class="badge badge-info" py:if="s_avg_reading.get_stddev(student.avg_reading) == 2">+2</span>
+                        <span class="badge badge-success" py:if="s_avg_reading.get_stddev(student.avg_reading) == 3">+3</span>
+                        <span class="badge badge-success" py:if="s_avg_reading.get_stddev(student.avg_reading) == 4">+4</span>
+
+
+</td>
+                      <td>${student.avg_insight}
+		        <span class="badge badge-important" py:if="s_avg_insight.get_stddev(student.avg_insight) == -4 and student.avg_reading > 0">-1</span>
+                        <span class="badge badge-important" py:if="s_avg_insight.get_stddev(student.avg_insight) == -3">-3</span>
+                        <span class="badge badge-warning" py:if="s_avg_insight.get_stddev(student.avg_insight) == -2">-2</span>
+                        <span class="badge badge-info" py:if="s_avg_insight.get_stddev(student.avg_insight) == 2">+2</span>
+                        <span class="badge badge-success" py:if="s_avg_insight.get_stddev(student.avg_insight) == 3">+3</span>
+                        <span class="badge badge-success" py:if="s_avg_insight.get_stddev(student.avg_insight) == 4">+4</span>
+
+
+</td>
+                      <td>${student.avg_nonzero_reading}
+			<span class="badge badge-important" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == -5">-5</span>
+		        <span class="badge badge-important" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == -4">-4</span>
+                        <span class="badge badge-important" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == -3">-3</span>
+                        <span class="badge badge-warning" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == -2">-2</span>
+                        <span class="badge badge-info" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == 2">+2</span>
+                        <span class="badge badge-success" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == 3">+3</span>
+                        <span class="badge badge-success" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == 4">+4</span>
+                        <span class="badge badge-success" py:if="s_avg_nz_reading.get_stddev(student.avg_nonzero_reading) == 5">+5</span>
+
+</td>
+                      <td>${student.avg_nonzero_insight}
+			<span class="badge badge-important" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == -5">-5</span>
+		        <span class="badge badge-important" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == -4">-4</span>
+                        <span class="badge badge-important" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == -3">-3</span>
+                        <span class="badge badge-warning" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == -2">-2</span>
+                        <span class="badge badge-info" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == 2">+2</span>
+                        <span class="badge badge-success" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == 3">+3</span>
+                        <span class="badge badge-success" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == 4">+4</span>
+                        <span class="badge badge-success" py:if="s_avg_nz_insight.get_stddev(student.avg_nonzero_insight) == 5">+5</span>
+
+
+</td>
+                      <td>${student.submitted_papers}/${student.expected_papers}
+		        <span class="badge badge-important" py:if="s_avg_submitted.get_stddev(student.submitted_papers) == -4 and student.submitted_papers > 0">!</span>
+                        <span class="badge badge-important" py:if="s_avg_submitted.get_stddev(student.submitted_papers) == -3">!</span>
+                        <span class="badge badge-warning"   py:if="s_avg_submitted.get_stddev(student.submitted_papers) == -2">!</span>
+
+</td>
+                      <td>${student.user_name}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+                <b>Assigned Papers</b> (${len(papers)})
+              </a>
+            </div>
+            <div id="collapseThree" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <table class="table table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Paper</th>
+                      <th>Due Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr py:for="paper in papers  ">
+                      <td>
+                        <a href="/paper/view?paper_id=${paper.id}"><button class="btn btn-mini btn-inverse" type="button">view</button></a>
+                      </td>
+                      <td><a href="${paper.download_url}">${paper.name}</a></td>
+                      <td>${paper.due_date.strftime("%m/%d/%Y")}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <a class="btn btn-primary" href="/paper/new?course_id=${course.id}">new paper</a>
+              </div>
+            </div>
+          </div>
+	<div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFour">
+                <b>Recent Comments</b> (${len(reviews)})
+              </a>
+            </div>
+            <div id="collapseFour" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <table class="table table-striped table-condensed">
+                  <tbody>
+                    <tr py:for="review, student, paper in reviews">
+		  <blockquote>
+    <p>
+      <span class="label label-important" py:if="review.rating == 0">${str(review.rating)} - reading</span>
+      <span class="label label-warning" py:if="review.rating == 1">${str(review.rating)} - reading</span>
+      <span class="label label-info" py:if="review.rating == 2">${str(review.rating)} - reading</span>
+      <span class="label label-success" py:if="review.rating == 3">${str(review.rating)} - reading</span>
+
+      <span class="label label-important" py:if="review.insight_rating == 0">${str(review.insight_rating)} - insight</span>
+      <span class="label label-warning" py:if="review.insight_rating == 1">${str(review.insight_rating)} - insight</span>
+      <span class="label label-info" py:if="review.insight_rating == 2">${str(review.insight_rating)} - insight</span>
+      <span class="label label-success" py:if="review.insight_rating == 3">${str(review.insight_rating)} - insight</span>
+      ${review.comments.encode('utf-8', 'ignore') if review.comments else "no comments."}
+    </p>
+    <small><a href="/student/view?student_id=${review.creator.id}">${review.creator.display_name.replace(",", ", ")}</a> regarding <a href="/summary/view?summary_id=${review.summary_id}">response</a> on <a href="/paper/view?paper_id=${paper.id}"><i>${paper.name}</i></a> by <a href="/student/view?student_id=${student.id}">${student.display_name.replace(",",", ")}</a> </small>
+  </blockquote>
+		    </tr>
+		</tbody>
+</table>
+              </div>
+            </div>
+          </div>
+<div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseFive">
+                <b>Score Distribution</b>
+              </a>
+            </div>
+            <div id="collapseFive" class="accordion-body collapse">
+              <div class="accordion-inner">
+<style>
+#chart svg {
+  height: 500px;
+}
+</style>
+
+
+<div id="chart">
+  <svg></svg>
+</div>
+
+             </div>
+            </div>
+          </div>
+<div class="accordion-group">
+            <div class="accordion-heading">
+              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseSix">
+                <b>Peer Feedback Stats</b> (${len(feedback)})
+              </a>
+            </div>
+            <div id="collapseSix" class="accordion-body collapse">
+              <div class="accordion-inner">
+   <table class="table table-striped table-condensed">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                <th>Average</th>
+                <th>Variance</th>
+                <th>Dist from Avg</th>
+                <th>Avg Len</th>
+                <th>Non Null</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr py:for="f in feedback">
+                      <td><a href="/student/view?student_id=${f.user_id}">${f.display_name.replace(",", ", ")}</a></td>
+                      <td>${round(float(f.avg_),2) if f.avg_ else "n/a"}
+                        <span class="badge badge-important" py:if="s_f_avg.get_stddev(f.avg_) == -4">-4</span>
+                        <span class="badge badge-important" py:if="s_f_avg.get_stddev(f.avg_) == -3">-3</span>
+                        <span class="badge badge-warning" py:if="s_f_avg.get_stddev(f.avg_) == -2">-2</span>
+                        <span class="badge badge-warning" py:if="s_f_avg.get_stddev(f.avg_) == 2">+2</span>
+                        <span class="badge badge-important" py:if="s_f_avg.get_stddev(f.avg_) == 3">+3</span>
+                        <span class="badge badge-important" py:if="s_f_avg.get_stddev(f.avg_) == 4">+4</span>
+                      </td>
+                      <td>${round(f.var_, 2) if f.var_ else "n/a"}</td>
+                      <td>${round(f.avg_diff, 2) if f.avg_diff else "n/a"}
+                        <span class="badge badge-warning" py:if="s_f_distavg.get_stddev(f.avg_diff) == 3">!</span>
+                        <span class="badge badge-important" py:if="s_f_distavg.get_stddev(f.avg_diff) == 4">!</span>
+                        <span class="badge badge-important" py:if="s_f_distavg.get_stddev(f.avg_diff) == 5">!</span>
+
+</td>
+                      <td>${int(f.avg_len) if f.avg_len else "n/a"}
+			<span class="badge" py:if="s_f_avglen.get_stddev(f.avg_len) == 1">+1</span>
+                        <span class="badge badge-info" py:if="s_f_avglen.get_stddev(f.avg_len) == 2">+2</span>
+                        <span class="badge badge-success" py:if="s_f_avglen.get_stddev(f.avg_len) == 3">+3</span>
+                        <span class="badge badge-success" py:if="s_f_avglen.get_stddev(f.avg_len) == 4">+4</span>
+                        <span class="badge badge-success" py:if="s_f_avglen.get_stddev(f.avg_len) == 5">+5</span>
+
+		      </td>
+                      <td>${f.num_nonnull}
+                        <span class="badge" py:if="s_f_nonnull.get_stddev(f.num_nonnull) == 1">+1</span>
+                        <span class="badge badge-info" py:if="s_f_nonnull.get_stddev(f.num_nonnull) == 2">+2</span>
+                        <span class="badge badge-success" py:if="s_f_nonnull.get_stddev(f.num_nonnull) == 3">+3</span>
+                        <span class="badge badge-success" py:if="s_f_nonnull.get_stddev(f.num_nonnull) == 4">+4</span>
+
+</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+             </div>
+            </div>
+          </div>
+
+
+        </div>
+
+
+      </div>
+    </div>
+  </body>
 </html>
